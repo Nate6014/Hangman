@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Hangman</title>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"/>
+<style>
+html {
+  font: 400 16px/1.428 'Verdana';
+}
+
+main {
+  padding: 20px;
+}
+
+header {
+  padding: 5px 20px;
+}
+
+header {
+  border-bottom: 2px ridge #666;
+}
+
+.word-spaces,
+.wrongLetters {
+  border: 1px ridge grey;
+  table-layout: fixed;
+  border-collapse: collapse;
+  margin: 10px 0;
+}
+
+.word-spaces td,
+.wrongLetters td {
+  border: 2px inset #BBB;
+  width: 3ch;
+  height: 1.5rem;
+  padding: 1px;
+  text-align: center;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  color: white;
+}
+
+.wrongLetters td {
+  color: red;
+}
+
+.form-control {
+  width: 10ch;
+  text-align: center;
+}
+
+ul {
+  font-size: 1rem;
+  list-style: none;
+  padding-left: 0;
+}
+
+</style>
+</head>
+
+<body>
+
+  <header>
+    <h2>
+    Hangman
+    </h2>
+  </header>
+  <main>
+
+    <table class="word-spaces">
+      <caption>Your Word is: </caption>
+      <tbody>
+        <tr></tr>
+      </tbody>
+    </table>
+    <br/>
+    <fieldset class="guessIn">
+      <legend>
+        Guess a Letter
+      </legend>
+      <label for="form">Type a Letter then Click <kbd>Enter</kbd></label>
+      <input type="text" id="form" class="form-control" placeholder="guess">
+
+    </fieldset>
+
+    <table class="wrongLetters">
+      <caption>Letters Guessed Wrong:</caption>
+      <tbody>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+  <script>
+// Arrrays and word bank
+var wordBank = ["array", "jquery", "bootstrap", "javascript", "hangman", "cookies", "lazy", "words", "chimichanga", "browser", "iranoutofideas"];
+var word = [];
+var wrongGuesses = [];
+var rightGuesses = [];
+// Get random word from bank
+$(document).ready(function() {
+  function randomWord() {
+    var random = Math.floor(Math.random() * wordBank.length);
+    var toString = wordBank[random];
+    console.log(toString);
+    word = toString.split("");
+    console.log(word);
+  }
+  randomWord();
+// Blank spaces
+  function wordSpaces() {
+    for (var i = 0; i < word.length; i++) {
+      $(".word-spaces > tbody > tr").append('<td data-idx=i>' + word[i] + '</td>')
+    }
+  }
+  wordSpaces();
+
+  function play(space) {
+    var lIndex = jQuery.inArray(space, word);
+    if (lIndex == -1) {
+      wrongGuesses.push(space);
+      var wrong = wrongGuesses.length;
+      console.log('wrong ' + wrong)
+      $('.wrongLetters tbody tr td:eq(' + wrong + ')').text(space);
+    } else {
+        console.log(word + "word"); 
+      console.log(space + "space");
+        function getInstances(word,space) {
+          var indexes = [], w;
+          for(w=0; w<word.length;w++ )
+          if (word[w] === space)
+          indexes.push(w);
+          return indexes;
+        }
+      console.log(word + "word"); 
+      console.log(space + "space");
+      var indexes = getInstances(word, space);
+      console.log(indexes);
+      rightGuesses.push(space);
+      console.log(rightGuesses); 
+      $.each(indexes,function(e,i){
+     		 $(".word-spaces tbody tr td:eq(" + i + ")").css('color', 'black');
+      })
+    }
+  }
+// Enter letter guess
+  $(".form-control").keypress(function(event) {
+    var keycode = (event.keyCode ? event.keyCode : event.which);
+    if (keycode == 13) {
+      var space = $(this).val();
+      play(space);
+      $(this).val('');
+      endGame();
+      return false;
+    }
+  });
+// Game end
+  function endGame() {
+    if (wrongGuesses.length >= 10 || rightGuesses.length == word.length) {
+      $("body").css("background-color", "#ff4500");
+      $(".form-control").prop('disabled', true);
+    }
+
+  }
+
+});
+</script>
+</body>
+</html>
